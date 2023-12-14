@@ -1,0 +1,15 @@
+<div class="container">
+    <h1 class="page-header">Reminders</h1>
+  
+  <ul class="list-group">
+    <% sessions.forEach(function (session) { %>
+      <li class="list-group-item">
+        <strong><%= session.sessionId %>: </strong>
+        <%= session.sessionExpires %>
+        <%= session.userId %>
+      </li>
+    <% }) %>
+  </ul>
+  
+  </div>
+  

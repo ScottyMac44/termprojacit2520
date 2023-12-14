@@ -5,6 +5,9 @@ const ejsLayouts = require("express-ejs-layouts");
 const reminderController = require("./controller/reminder_controller");
 const authController = require("./controller/auth_controller");
 const session = require("express-session");
+const multer = require("multer");
+const upload = multer({ dest: "public/uploads/" });
+const { ensureAuthenticated } = require("./middleware/checkAuth");
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -21,22 +24,22 @@ app.use(
     },
   })
 );
-
-app.use(ejsLayouts);
-
-app.set("view engine", "ejs");
-
+  
+  app.use(ejsLayouts);
+  
+  app.set("view engine", "ejs");
+  
 const passport = require("./middleware/passport");
 app.use(passport.initialize());
 app.use(passport.session());
-
+  
 
 // Routes start here
 app.get("/reminders", reminderController.list);
-app.get("/reminder/new", reminderController.new);
-app.get("/reminder/:id", reminderController.listOne);
-app.get("/reminder/:id/edit", reminderController.edit);
-app.post("/reminder/", reminderController.create);
+app.get("/reminder/new", ensureAuthenticated, reminderController.new);
+app.get("/reminder/:id", ensureAuthenticated, reminderController.listOne);
+app.get("/reminder/:id/edit", ensureAuthenticated, reminderController.edit);
+app.post("/reminder/", upload.array(), reminderController.create);
 // ⭐ Implement these two routes below!
 app.post("/reminder/update/:id", reminderController.update);
 app.post("/reminder/delete/:id", reminderController.delete);
